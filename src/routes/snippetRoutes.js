@@ -1,5 +1,7 @@
 import express from "express";
 import axios from "axios";
+import Snippet from "../models/Snippet.js";
+
 import {
   searchSnippets,
   addSnippet,
@@ -38,6 +40,19 @@ router.get("/models", async (req, res) => {
     res.status(500).json(err?.response?.data || err.message);
   }
 });
+// 🔍 Get all snippets (DEBUG)
+router.get("/", async (req, res) => {
+  try {
+    const data = await Snippet.find();
+    res.json({
+      count: data.length,
+      data
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch snippets", err });
+  }
+});
+
 
 
 export default router;

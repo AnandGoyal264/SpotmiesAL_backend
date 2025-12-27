@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const snippetSchema = new mongoose.Schema(
   {
     title: String,
-    language: String,
+    
     description: String,
     code: String,
     tags: [String],
