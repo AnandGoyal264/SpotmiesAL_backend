@@ -1,23 +1,27 @@
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+import axios from "axios";
 
 export const getAISuggestion = async (query) => {
   try {
-    const response = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [
+    if (!process.env.GEMINI_API_KEY) return "AI not configured";
+
+    const url =
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+    const response = await axios.post(url, {
+      contents: [
         {
-          role: "user",
-          content: `Suggest best coding approach or snippet for: ${query}`
+          parts: [
+            {
+              text: `Suggest best coding approach or code snippet for: ${query}`
+            }
+          ]
         }
       ]
     });
 
-    return response.choices[0].message.content;
+    return response.data.candidates[0].content.parts[0].text;
   } catch (err) {
+    console.log("GEMINI ERROR:", err?.response?.data || err.message);
     return "AI suggestion unavailable currently.";
   }
 };
